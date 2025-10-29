@@ -1,0 +1,40 @@
+{
+  "apphosting": {
+    "backends": [
+      {
+        "id": "propertease-frontend",
+        "region": "us-central1",
+        "source": "frontend"
+      },
+      {
+        "id": "propertease-frontend-eu",
+        "region": "europe-west1",
+        "source": "frontend"
+      },
+      {
+        "id": "propertease-backend",
+        "region": "us-central1",
+        "source": "backend"
+      },
+      {
+        "id": "propertease-backend-eu",
+        "region": "europe-west1",
+        "source": "backend"
+      }
+    ]
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+specVersion: "v1beta"
+serviceId: "professionaltutor845"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "professionaltutor845-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

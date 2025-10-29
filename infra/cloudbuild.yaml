@@ -1,0 +1,53 @@
+steps:
+  # 1. Build the recommendation service container
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Recommendation Service'
+    args:
+      - 'build'
+      - '-t'
+      - '${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/recommendation-service:$COMMIT_SHA'
+      - './recommendation-service'
+
+  # 2. Push the container to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Recommendation Service'
+    args:
+      - 'push'
+      - '${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/recommendation-service:$COMMIT_SHA'
+
+  # 3. Deploy the recommendation service to Cloud Run
+  # Using Cloud Run for simplicity; can be adapted for GKE.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy Recommendation Service'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'recommendation-service'
+      - '--image=${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/recommendation-service:$COMMIT_SHA'
+      - '--region'
+      - '${_GCP_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated' # For public access, restrict with IAM in production
+
+  # 4. Deploy the Geocoding Cloud Function
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy Geocoding Function'
+    entrypoint: gcloud
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'propertease-geocoding'
+      - '--runtime=nodejs18'
+      - '--trigger-http'
+      - '--source=./geocoding-function'
+      - '--region=${_GCP_REGION}'
+      - '--allow-unauthenticated'
+
+images:
+  - '${_GCP_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO_NAME}/recommendation-service:$COMMIT_SHA'
+
+substitutions:
+  _GCP_REGION: 'us-central1'
+  _REPO_NAME: 'propertease-repo'

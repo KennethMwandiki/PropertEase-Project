@@ -1,0 +1,4 @@
+# Settings for Frontend (Next.js on App Hosting).
+# See https://firebase.google.com/docs/app-hosting/configure-nextjs
+runConfig:
+  minInstances: 0

@@ -1,0 +1,1042 @@
+<!-- PropertEase: A real estate application prototype -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropertEase - Prototype</title>
+    <meta name="description" content="Live prototype of the PropertEase application.">
+    <style>
+        /* 1. FONT IMPORT & CSS VARIABLES */
+        @import url('https://fonts.googleapis.com/css2?family=Geist+Sans:wght@400;500;700&display=swap');
+
+        :root {
+            --background: 222 47% 11%;
+            --foreground: 210 40% 98%;
+            --card: 222 47% 13%;
+            --card-foreground: 210 40% 98%;
+            --primary: 262 88% 66%;
+            --primary-foreground: 222 47% 11%;
+            --secondary: 217 33% 17%;
+            --muted: 217 33% 22%;
+            
+            --font-geist-sans: 'Geist Sans', sans-serif;
+        }
+
+        /* 2. BASE & LAYOUT STYLES */
+        * {
+            box-sizing: border-box;
+            border-color: hsl(var(--secondary));
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-geist-sans);
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            background-image: radial-gradient(circle at 1px 1px, hsl(var(--muted)) 1px, transparent 0);
+            background-size: 2rem 2rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1024px;
+            }
+        }
+
+        main {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 8rem; /* 128px */
+            padding-bottom: 3rem;
+        }
+
+        /* 3. COMPONENT STYLES */
+
+        /*Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+            background-color: hsla(var(--background) / 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid hsl(var(--secondary));
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            background-image: linear-gradient(to right, hsl(var(--foreground)), hsl(var(--primary)));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .nav-links .btn-secondary {
+            background-color: hsla(var(--secondary) / 0.5);
+        }
+        .nav-links .btn-secondary:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        /* Buttons & User Info */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        .btn-primary:hover {
+            filter: brightness(0.9);
+        }
+        .btn-secondary {
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--foreground));
+        }
+        .btn-secondary:hover {
+            background-color: hsl(var(--muted));
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .user-info span {
+            font-size: 0.875rem;
+        }
+        .user-info img {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+        }
+        .profile-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            max-width: 48rem;
+        }
+        .hero h1 {
+            font-size: 3.75rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            background-image: linear-gradient(to bottom, hsl(var(--foreground)), hsl(var(--muted)));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.125rem;
+            color: hsl(var(--muted));
+            max-width: 42rem;
+            margin: 0 auto 2rem;
+        }
+        
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+            background-color: hsl(var(--card));
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid hsl(var(--secondary));
+            width: 100%;
+            max-width: 48rem;
+            margin-bottom: 4rem;
+        }
+        .search-bar input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: hsl(var(--foreground));
+            font-size: 1rem;
+            padding: 0.5rem;
+        }
+        .search-bar input:focus {
+            outline: none;
+        }
+
+        /* Property Grid & Cards */
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+        .property-card {
+            background-color: hsl(var(--card));
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid hsl(var(--secondary));
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -12px hsla(var(--primary) / 0.2);
+        }
+        .property-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .property-card-body {
+            padding: 1rem;
+        }
+        .property-card-body h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .property-card-body p {
+            color: hsl(var(--muted));
+            margin: 0.5rem 0;
+        }
+        .property-card-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .price-market-avg {
+            color: hsl(var(--muted));
+            font-size: 0.8rem;
+        }
+
+        /* Map Card Section */
+        .map-card {
+            margin-top: 3rem;
+            width: 100%;
+            max-width: 64rem;
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid hsl(var(--secondary));
+            background-color: hsl(var(--card));
+            box-shadow: 0 25px 50px -12px hsla(var(--primary) / 0.1);
+        }
+        .map-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: hsl(var(--card-foreground));
+            margin-bottom: 1.5rem;
+        }
+        .map-card-header .icon {
+            color: hsl(var(--primary));
+        }
+        .map-placeholder {
+            width: 100%;
+            height: 500px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background-color: hsl(var(--muted));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: hsla(var(--foreground) / 0.5);
+        }
+        
+        /* CTA Sections */
+        .cta-section {
+            text-align: center;
+            padding: 4rem 1rem;
+            margin-top: 4rem;
+            border-top: 1px solid hsl(var(--secondary));
+            width: 100%;
+        }
+        .cta-section h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .cta-section p {
+            color: hsl(var(--muted));
+            max-width: 42rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            width: 100%;
+            border-top: 1px solid hsl(var(--secondary));
+            margin-top: 4rem;
+            padding: 2rem 1rem;
+            text-align: center;
+            color: hsl(var(--muted));
+            font-size: 0.875rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: hsla(var(--background) / 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: hsl(var(--card));
+            padding: 2rem;
+            border: 1px solid hsl(var(--secondary));
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+        .modal-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .modal-body-centered {
+            text-align: center;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: hsl(var(--muted));
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        .modal-form input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            background-color: hsl(var(--secondary));
+            border: 1px solid hsl(var(--muted));
+            border-radius: 0.5rem;
+            color: hsl(var(--foreground));
+        }
+        .form-switcher {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: hsl(var(--muted));
+        }
+        .form-switcher a {
+            color: hsl(var(--primary));
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .form-switcher a:hover {
+            text-decoration: underline;
+        }
+
+        /* Auth Modal Tabs */
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid hsl(var(--secondary));
+            margin-bottom: 1.5rem;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: none;
+            border: none;
+            color: hsl(var(--muted));
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .auth-tab:hover {
+            color: hsl(var(--foreground));
+        }
+        .auth-tab.active {
+            color: hsl(var(--primary));
+            border-bottom-color: hsl(var(--primary));
+        }
+
+        /* Floating Chat Bubble */
+        .chat-bubble {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            background-color: hsl(var(--primary));
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px hsla(var(--primary) / 0.4);
+            z-index: 100;
+            transition: transform 0.2s ease-in-out;
+        }
+        .chat-bubble:hover {
+            transform: scale(1.1);
+        }
+        .chat-bubble .icon {
+            width: 1.75rem;
+            height: 1.75rem;
+            color: hsl(var(--primary-foreground));
+        }
+
+        /* Profile Modal Specifics */
+        .profile-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+        }
+        .profile-email {
+            color: hsl(var(--muted));
+            margin-bottom: 2rem;
+        }
+        
+        /* Chat Modal */
+        .chat-modal-content {
+            max-width: 500px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 70vh;
+            max-height: 600px;
+        }
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid hsl(var(--secondary));
+            flex-shrink: 0;
+        }
+        .chat-header h3 {
+            font-size: 1.25rem;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .chat-message {
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+        .chat-message.bot {
+            background-color: hsl(var(--secondary));
+            border-bottom-left-radius: 0.25rem;
+            align-self: flex-start;
+        }
+        .chat-message.user {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-bottom-right-radius: 0.25rem;
+            align-self: flex-end;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 1rem;
+            gap: 0.5rem;
+            border-top: 1px solid hsl(var(--secondary));
+            flex-shrink: 0;
+        }
+        .chat-input-area input {
+            flex-grow: 1;
+            background-color: hsl(var(--secondary));
+            border: 1px solid hsl(var(--muted));
+            border-radius: 0.5rem;
+            color: hsl(var(--foreground));
+            padding: 0.75rem;
+        }
+        .chat-input-area input:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+        }
+        .chat-input-area .btn {
+            padding: 0.5rem;
+            width: 3rem;
+            height: 3rem;
+            justify-content: center;
+        }
+        .chat-input-area .btn.active {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+
+
+        /* Utility */
+        .hidden {
+            display: none;
+        }
+        .icon {
+            width: 1em;
+            height: 1em;
+            stroke-width: 2;
+            stroke: currentColor;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .property-card .property-card-image-wrapper {
+            position: relative;
+        }
+        .property-card img {
+            display: block;
+        }
+        .btn-icon {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: hsla(var(--card) / 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid hsla(var(--secondary) / 0.5);
+            border-radius: 9999px;
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: hsl(var(--foreground));
+        }
+        .btn-icon:hover { background-color: hsla(var(--card) / 0.9); }
+        .btn-icon.saved .icon { fill: hsl(var(--primary)); stroke: hsl(var(--primary)); }
+        .btn-ai-why { background: none; border: 1px solid hsl(var(--primary)); color: hsl(var(--primary)); }
+        .btn-ai-why:hover { background-color: hsla(var(--primary) / 0.1); }
+        .btn-large {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        .btn-small {
+            padding: 0.25rem 0.75rem;
+        }
+        .btn-full-width {
+            width: 100%;
+        }
+        .mb-1 {
+            margin-bottom: 1rem;
+        }
+
+        /* Error Messages */
+        .error-message {
+            color: #f44336;
+            font-size: 0.875rem;
+            margin-top: -0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+    </style>
+    <link rel="icon" href="icon.png">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="nav-content container">
+            <div class="logo">PropertEase</div>
+            <div id="auth-container">
+                <div class="nav-links">
+                    <button class="btn btn-secondary" onclick="alert('Opening owner verification flow...')">List your space</button>
+                    <!-- Logged Out State -->
+                    <button id="signin-btn" class="btn btn-primary">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" x2="3" y1="12" y2="12"></line></svg>
+                        <span>Sign In</span>
+                    </button>
+                    <!-- Logged In State -->
+                    <div id="user-info-nav" class="user-info hidden">
+                        <div id="profile-btn" class="profile-button">
+                            <img src="https://i.pravatar.cc/40?u=propertease" alt="User Avatar">
+                            <span id="welcome-name">Welcome, Alex!</span>
+                        </div>
+                        <button id="signout-btn" class="btn btn-secondary">
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <div class="hero container">
+            <h1>Find Your Next Space</h1>
+            <p id="hero-subtitle">
+                Discover, verify, and book properties with confidence using our AI-powered platform.
+            </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar container">
+            <input type="text" placeholder="Search by city, neighborhood, or address...">
+            <button class="btn btn-primary">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg>
+                <span>Search</span>
+            </button>
+        </div>
+
+        <!-- AI-Powered Recommendations -->
+        <div class="container">
+            <div class="map-card-header">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2l.7 4.4L18 7l-3.8 2.3L18 14l-5.3-1.1L12 22l-1.6-8.1L5 14l3.8-2.3L5 7l5.3.4z"></path></svg>
+                <h2>Personalized For You</h2>
+            </div>
+            <div class="property-grid">
+                <!-- Property Card 1 -->
+                <div class="property-card">
+                    <div class="property-card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8YXBhcnRtZW50fHx8fHx8MTY3MzA5ODU0OA&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080" alt="Modern Apartment">
+                        <button class="btn-icon btn-save" aria-label="Save property">
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
+                    <div class="property-card-body">
+                        <h3>Downtown Loft</h3>
+                        <p>Sunny, 1-bedroom with city views.</p>
+                        <p><b>AI Price: $2,800/mo</b> <span class="price-market-avg">(Market average: $2,950)</span></p>
+                        <div class="property-card-tags">
+                            <button class="btn btn-secondary btn-small">View 3D Tour</button>
+                            <button class="btn-ai-why btn-small">Why this for me?</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Property Card 2 -->
+                <div class="property-card">
+                    <div class="property-card-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8aG91c2V8fHx8fHwxNjczMDk4NTg1&ixlib.rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080" alt="Suburban House">
+                        <button class="btn-icon btn-save" aria-label="Save property">
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
+                    <div class="property-card-body">
+                        <h3>Suburban Family Home</h3>
+                        <p>3-bed, 2-bath with a large backyard.</p>
+                        <p><b>AI Price: $750,000</b> <span class="price-market-avg">(Market average: $740,000)</span></p>
+                        <div class="property-card-tags">
+                             <button class="btn btn-secondary btn-small">View 3D Tour</button>
+                             <button class="btn-ai-why btn-small">Why this for me?</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-card container">
+            <div class="map-card-header">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <h2>Discover Properties Near You</h2>
+            </div>
+            <div class="map-placeholder">
+                <p>Interactive Map Placeholder</p>
+            </div>
+
+
+            <iframe src="https://your-3d-tour-provider.com/tour/123" width="100%" height="400px">3D Tour</iframe>
+
+        </div>
+
+        <!-- CTA: Become a Host -->
+        <section class="cta-section container">
+            <h2>Become a PropertEase Host</h2>
+            <p>Join thousands of property owners who are seamlessly connecting with buyers and renters. Our AI tools help you create listings, set prices, and verify tenants with ease.</p>
+            <button class="btn btn-primary btn-large" onclick="alert('Opening owner verification flow...')">Start Listing Today</button>
+        </section>
+
+        <!-- CTA: Influencer Hub -->
+        <section class="cta-section container">
+            <h2>Join our Influencer Hub</h2>
+            <p>Are you a content creator in the real estate, finance, or lifestyle space? Partner with PropertEase to create authentic content and earn commissions.</p>
+            <button class="btn btn-secondary btn-large" onclick="alert('Redirecting to Influencer Onboarding...')">Become a Partner</button>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Ken’s Digital Hub. All rights reserved. PropertEase and its framework are the exclusive property of Ken’s Digital Hub.</p>
+    </footer>
+
+    <!-- AUTHENTICATION MODAL -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeModal('auth-modal')">&times;</button>
+            
+            <div class="auth-tabs">
+                <button id="signin-tab" class="auth-tab active" data-form="signin-form">Sign In</button>
+                <button id="signup-tab" class="auth-tab" data-form="signup-form">Sign Up</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="signin-form" class="modal-form">
+                <h2 class="modal-title">Welcome Back</h2>
+                <input id="signin-email" type="email" placeholder="Email Address" required>
+                <input id="signin-password" type="password" placeholder="Password" required>
+                <button type="submit" class="btn btn-primary btn-full-width">Sign In</button>
+                <p class="form-switcher">Don't have an account? <a href="#" id="switch-to-signup">Sign Up</a></p>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="modal-form hidden">
+                <h2 class="modal-title">Create Your Account</h2>
+                <div id="signup-name-error" class="error-message"></div>
+                <input id="signup-name" type="text" placeholder="Full Name" required>
+
+                <div id="signup-email-error" class="error-message"></div>
+                <input id="signup-email" type="email" placeholder="Email Address" required>
+
+                <div id="signup-password-error" class="error-message"></div>
+                <input id="signup-password" type="password" placeholder="Password" required>
+                <button type="submit" class="btn btn-primary btn-full-width">Create Account</button>
+                <p class="form-switcher">Already have an account? <a href="#" id="switch-to-signin">Sign In</a></p>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div id="profile-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeModal('profile-modal')">&times;</button>
+            <div class="modal-body-centered">
+                <img src="https://i.pravatar.cc/80?u=propertease" alt="User Avatar" class="profile-avatar-large">
+                <h2 id="profile-name">Alex Johnson</h2>
+                <p id="profile-email" class="profile-email">alex.j@example.com</p>
+                <button class="btn btn-secondary btn-full-width mb-1">My Listings</button>
+                <button class="btn btn-secondary btn-full-width">Account Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Chat Bubble -->
+    <div id="chat-bubble" class="chat-bubble">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </div>
+
+    <!-- CHAT MODAL -->
+    <div id="chat-modal" class="modal hidden">
+        <div class="modal-content chat-modal-content">
+            <div class="chat-header">
+                <h3>PropertEase AI Assistant</h3>
+                <button class="modal-close-btn" onclick="closeModal('chat-modal')">&times;</button>
+            </div>
+            <div id="chat-messages" class="chat-messages">
+                <div class="chat-message bot">Hello! How can I help you find your perfect space today? You can ask me about listings, neighborhoods, or scheduling a tour.</div>
+            </div>
+            <div id="chat-input-area" class="chat-input-area">
+                <input id="chat-input" type="text" placeholder="Type your message...">
+                <button id="chat-send-btn" class="btn btn-primary"><svg class="icon" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
+                <button id="chat-voice-btn" class="btn btn-secondary"><svg class="icon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT FOR INTERACTIVITY -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Modal elements
+            const authModal = document.getElementById('auth-modal');
+            const profileModal = document.getElementById('profile-modal');
+
+            // Auth state elements
+            const signInBtn = document.getElementById('signin-btn');
+            const signOutBtn = document.getElementById('signout-btn');
+            const userInfoNav = document.getElementById('user-info-nav');
+            const heroSubtitle = document.getElementById('hero-subtitle');
+            const profileBtn = document.getElementById('profile-btn');
+
+            // --- Auth Modal Elements ---
+            const authTabs = document.querySelector('.auth-tabs');
+            const signinTab = document.getElementById('signin-tab');
+            const signupTab = document.getElementById('signup-tab');
+            const signinForm = document.getElementById('signin-form');
+            const signupForm = document.getElementById('signup-form');
+            const switchToSignup = document.getElementById('switch-to-signup');
+            const switchToSignin = document.getElementById('switch-to-signin');
+
+            // --- Validation Elements ---
+            const signupNameError = document.getElementById('signup-name-error');
+            const signupEmailError = document.getElementById('signup-email-error');
+            const signupPasswordError = document.getElementById('signup-password-error');
+            // Form elements
+            const signupName = document.getElementById('signup-name');
+            const signupEmail = document.getElementById('signup-email');
+            const signinEmail = document.getElementById('signin-email');
+            const welcomeName = document.getElementById('welcome-name');
+            const profileName = document.getElementById('profile-name');
+            const profileEmail = document.getElementById('profile-email');
+
+            const signupPassword = document.getElementById('signup-password');
+
+            // State can be 'signed_in' or 'signed_out'
+            let authState = 'signed_out';
+            let currentUser = null;
+
+            function updateUI() {
+                if (authState === 'signed_in') {
+                    signInBtn.classList.add('hidden');
+                    userInfoNav.classList.remove('hidden');
+                    heroSubtitle.textContent = `Welcome back, ${currentUser.name}! Discover, verify, and book properties with confidence using our AI-powered platform.`;
+                    welcomeName.textContent = `Welcome, ${currentUser.name}!`;
+                    // Update profile modal details
+                    const profileAvatar = profileModal.querySelector('.profile-avatar-large');
+                    profileAvatar.src = `https://i.pravatar.cc/80?u=${currentUser.email}`;
+                    profileName.textContent = currentUser.name;
+                    profileEmail.textContent = currentUser.email;
+                } else {
+                    signInBtn.classList.remove('hidden');
+                    userInfoNav.classList.add('hidden');
+                    heroSubtitle.textContent = 'Discover, verify, and book properties with confidence using our AI-powered platform.';
+                    currentUser = null;
+                }
+            }
+
+            // --- Modal Logic ---
+            window.openModal = (modalId) => {
+                document.getElementById(modalId).classList.remove('hidden');
+            }
+            window.closeModal = (modalId) => {
+                document.getElementById(modalId).classList.add('hidden');
+            }
+
+            // --- Auth Form Switching Logic ---
+            function switchAuthForm(formToShow) {
+                if (formToShow === 'signup') {
+                    signinForm.classList.add('hidden');
+                    signupForm.classList.remove('hidden');
+                    signupTab.classList.add('active');
+                    signinTab.classList.remove('active');
+                } else { // 'signin'
+                    signupForm.classList.add('hidden');
+                    signinForm.classList.remove('hidden');
+                    signinTab.classList.add('active');
+                    signupTab.classList.remove('active');
+                }
+            }
+
+            // --- Event Listeners ---
+            signInBtn.addEventListener('click', () => {
+                switchAuthForm('signin'); // Default to signin form
+                openModal('auth-modal');
+            });
+            profileBtn.addEventListener('click', () => openModal('profile-modal'));
+
+            signOutBtn.addEventListener('click', () => {
+                authState = 'signed_out';
+                updateUI();
+            });
+
+            authTabs.addEventListener('click', (e) => {
+                if (e.target.matches('.auth-tab')) {
+                    switchAuthForm(e.target.dataset.form === 'signup-form' ? 'signup' : 'signin');
+                }
+            });
+            switchToSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchAuthForm('signup');
+            });
+            switchToSignin.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchAuthForm('signin');
+            });
+
+            signinForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = signinEmail.value;
+                if (email) {
+                    authState = 'signed_in';
+                    currentUser = {
+                        name: email.split('@')[0].replace(/\W/g, ' ').replace(/(?:^|\s)\S/g, a => a.toUpperCase()), // Capitalize for display
+                        email: email
+                    };
+                    updateUI();
+                    closeModal('auth-modal');
+                    signinForm.reset();
+                }
+            });
+
+
+
+              // --- Push Notifications (OneSignal) ---
+            function configurePushNotifications() {
+                // Ensure service workers are supported
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', () => {
+                        navigator.serviceWorker.register('service-worker.js')
+                            .then(registration => {
+                                console.log('Service Worker registered with scope:', registration.scope);
+                                // Request permission after registration
+                                return Notification.requestPermission();
+                            })
+                            .then(permission => {
+                                if (permission === 'granted') {
+                                    console.log('Notification permission granted.');
+                                    // You can now subscribe the user to push notifications
+                                    // and store the subscription details
+                                }
+                                else {
+                                    console.log('Unable to get permission to notify.');
+                                }
+                            })
+                            .catch(error => console.error('Service Worker registration failed:', error));
+                    });
+                }
+            }
+
+            function validateSignUpForm() {
+                let isValid = true;
+
+                // Reset error messages
+                signupNameError.textContent = '';
+                signupEmailError.textContent = '';
+                signupPasswordError.textContent = '';
+
+                // Validate Full Name
+                if (signupName.value.trim() === '') {
+                    signupNameError.textContent = 'Full Name is required.';
+                    isValid = false;
+                }
+
+                // Validate Email
+                if (signupEmail.value.trim() === '') {
+                    signupEmailError.textContent = 'Email Address is required.';
+                    isValid = false;
+                } else if (!isValidEmail(signupEmail.value.trim())) {
+                    signupEmailError.textContent = 'Please enter a valid email address.';
+                    isValid = false;
+                }
+
+                // Validate Password
+                if (signupPassword.value.trim() === '') {
+                    signupPasswordError.textContent = 'Password is required.';
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (validateSignUpForm()) {
+                    const email = signupEmail.value;
+                    const name = signupName.value;
+                    authState = 'signed_in';
+                    currentUser = {
+                        name: name,
+                        email: email
+                    };
+                    updateUI();
+                    closeModal('auth-modal');
+                    signupForm.reset();
+                    configurePushNotifications();
+                }
+            });
+
+            // --- AI Chat Logic ---
+            const chatBubble = document.getElementById('chat-bubble');
+            const chatInput = document.getElementById('chat-input');
+            const chatSendBtn = document.getElementById('chat-send-btn');
+            const chatVoiceBtn = document.getElementById('chat-voice-btn');
+            const chatMessages = document.getElementById('chat-messages');
+
+            chatBubble.addEventListener('click', () => openModal('chat-modal'));
+
+            function addChatMessage(message, sender) {
+                const messageEl = document.createElement('div');
+                messageEl.classList.add('chat-message', sender);
+                messageEl.textContent = message;
+                chatMessages.appendChild(messageEl);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function handleSendMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+                addChatMessage(message, 'user');
+                chatInput.value = '';
+
+                setTimeout(() => {
+                    let botResponse = "I'm sorry, I'm just a prototype. I can't process that yet. Try asking 'show me houses near downtown'.";
+                    if (message.toLowerCase().includes('downtown')) {
+                        botResponse = "Great choice! I've found 3 properties in the downtown area that match your preferences for modern design. I've highlighted them on the map for you.";
+                    } else if (message.toLowerCase().includes('tour')) {
+                        botResponse = "I can help with that! Which property would you like to tour?";
+                    }
+                    addChatMessage(botResponse, 'bot');
+                }, 1200);
+            }
+
+            // Helper function to validate email format
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            chatSendBtn.addEventListener('click', handleSendMessage);
+            chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSendMessage(); });
+            chatVoiceBtn.addEventListener('click', () => addChatMessage("Listening... (voice input is a demo)", 'bot'));
+
+            // --- AI Property Card Logic ---
+            document.querySelectorAll('.btn-save').forEach(btn => btn.addEventListener('click', (e) => e.currentTarget.classList.toggle('saved')));
+            document.querySelectorAll('.btn-ai-why').forEach(btn => btn.addEventListener('click', () => alert("AI Recommendation Reason:\n\n- Based on your recent searches for 'city views'.\n- Similar to other properties you've saved.\n- Price is within your estimated budget range.")));
+
+            // Initial UI setup
+            updateUI();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,575 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 1. FONT IMPORT & CSS VARIABLES */
+@import url('https://fonts.googleapis.com/css2?family=Geist+Sans:wght@400;500;700&display=swap');
+
+:root {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+    --primary: 262 88% 66%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
+    --muted: 217 33% 22%;
+    
+    --font-geist-sans: 'Geist Sans', sans-serif;
+}
+
+/* 2. BASE & LAYOUT STYLES */
+* {
+    box-sizing: border-box;
+    border-color: hsl(var(--secondary));
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-geist-sans);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    background-image: radial-gradient(circle at 1px 1px, hsl(var(--muted)) 1px, transparent 0);
+    background-size: 2rem 2rem;
+    line-height: 1.5;
+}
+
+.container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+main {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8rem; /* 128px */
+    padding-bottom: 3rem;
+}
+
+/* 3. COMPONENT STYLES */
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    background-color: hsla(var(--background) / 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid hsl(var(--secondary));
+}
+
+.nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    background-image: linear-gradient(to right, hsl(var(--foreground)), hsl(var(--primary)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.nav-links .btn-secondary {
+    background-color: hsla(var(--secondary) / 0.5);
+}
+.nav-links .btn-secondary:hover {
+    background-color: hsl(var(--secondary));
+}
+
+/* Buttons & User Info */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+.btn-primary {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+}
+.btn-primary:hover {
+    filter: brightness(0.9);
+}
+.btn-secondary {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--foreground));
+}
+.btn-secondary:hover {
+    background-color: hsl(var(--muted));
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.user-info span {
+    font-size: 0.875rem;
+}
+.user-info img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+}
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    max-width: 48rem;
+}
+.hero h1 {
+    font-size: 3.75rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    background-image: linear-gradient(to bottom, hsl(var(--foreground)), hsl(var(--muted)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1rem;
+}
+.hero p {
+    font-size: 1.125rem;
+    color: hsl(var(--muted));
+    max-width: 42rem;
+    margin: 0 auto 2rem;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    gap: 0.5rem;
+    background-color: hsl(var(--card));
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid hsl(var(--secondary));
+    width: 100%;
+    max-width: 48rem;
+    margin-bottom: 4rem;
+}
+.search-bar input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: hsl(var(--foreground));
+    font-size: 1rem;
+    padding: 0.5rem;
+}
+.search-bar input:focus {
+    outline: none;
+}
+
+/* Property Grid & Cards */
+.property-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+.property-card {
+    background-color: hsl(var(--card));
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid hsl(var(--secondary));
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px hsla(var(--primary) / 0.2);
+}
+.property-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.property-card-body {
+    padding: 1rem;
+}
+.property-card-body h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.property-card-body p {
+    color: hsl(var(--muted));
+    margin: 0.5rem 0;
+}
+.property-card-tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.price-market-avg {
+    color: hsl(var(--muted));
+    font-size: 0.8rem;
+}
+
+/* Map Card Section */
+.map-card {
+    margin-top: 3rem;
+    width: 100%;
+    max-width: 64rem;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid hsl(var(--secondary));
+    background-color: hsl(var(--card));
+    box-shadow: 0 25px 50px -12px hsla(var(--primary) / 0.1);
+}
+.map-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: hsl(var(--card-foreground));
+    margin-bottom: 1.5rem;
+}
+.map-card-header .icon {
+    color: hsl(var(--primary));
+}
+.map-placeholder {
+    width: 100%;
+    height: 500px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: hsl(var(--muted));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: hsla(var(--foreground) / 0.5);
+}
+
+/* CTA Sections */
+.cta-section {
+    text-align: center;
+    padding: 4rem 1rem;
+    margin-top: 4rem;
+    border-top: 1px solid hsl(var(--secondary));
+    width: 100%;
+}
+.cta-section h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.cta-section p {
+    color: hsl(var(--muted));
+    max-width: 42rem;
+    margin: 0 auto 1.5rem;
+}
+
+/* Footer */
+.footer {
+    width: 100%;
+    border-top: 1px solid hsl(var(--secondary));
+    margin-top: 4rem;
+    padding: 2rem 1rem;
+    text-align: center;
+    color: hsl(var(--muted));
+    font-size: 0.875rem;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: hsla(var(--background) / 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background-color: hsl(var(--card));
+    padding: 2rem;
+    border: 1px solid hsl(var(--secondary));
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+.modal-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.modal-body-centered {
+    text-align: center;
+}
+.modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: hsl(var(--muted));
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+.modal-form input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    background-color: hsl(var(--secondary));
+    border: 1px solid hsl(var(--muted));
+    border-radius: 0.5rem;
+    color: hsl(var(--foreground));
+}
+.form-switcher {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: hsl(var(--muted));
+}
+.form-switcher a {
+    color: hsl(var(--primary));
+    text-decoration: none;
+    font-weight: 700;
+}
+.form-switcher a:hover {
+    text-decoration: underline;
+}
+
+/* Auth Modal Tabs */
+.auth-tabs {
+    display: flex;
+    border-bottom: 1px solid hsl(var(--secondary));
+    margin-bottom: 1.5rem;
+}
+.auth-tab {
+    flex: 1;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    color: hsl(var(--muted));
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.auth-tab:hover {
+    color: hsl(var(--foreground));
+}
+.auth-tab.active {
+    color: hsl(var(--primary));
+    border-bottom-color: hsl(var(--primary));
+}
+
+/* Floating Chat Bubble */
+.chat-bubble {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: hsl(var(--primary));
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 25px -5px hsla(var(--primary) / 0.4);
+    z-index: 100;
+    transition: transform 0.2s ease-in-out;
+}
+.chat-bubble:hover {
+    transform: scale(1.1);
+}
+.chat-bubble .icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: hsl(var(--primary-foreground));
+}
+
+/* Profile Modal Specifics */
+.profile-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+}
+.profile-email {
+    color: hsl(var(--muted));
+    margin-bottom: 2rem;
+}
+
+/* Chat Modal */
+.chat-modal-content {
+    max-width: 500px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    max-height: 600px;
+}
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid hsl(var(--secondary));
+    flex-shrink: 0;
+}
+.chat-header h3 {
+    font-size: 1.25rem;
+}
+.chat-messages {
+    flex-grow: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.chat-message {
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    max-width: 80%;
+    line-height: 1.4;
+}
+.chat-message.bot {
+    background-color: hsl(var(--secondary));
+    border-bottom-left-radius: 0.25rem;
+    align-self: flex-start;
+}
+.chat-message.user {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border-bottom-right-radius: 0.25rem;
+    align-self: flex-end;
+}
+.chat-input-area {
+    display: flex;
+    padding: 1rem;
+    gap: 0.5rem;
+    border-top: 1px solid hsl(var(--secondary));
+    flex-shrink: 0;
+}
+.chat-input-area input {
+    flex-grow: 1;
+    background-color: hsl(var(--secondary));
+    border: 1px solid hsl(var(--muted));
+    border-radius: 0.5rem;
+    color: hsl(var(--foreground));
+    padding: 0.75rem;
+}
+.chat-input-area input:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+}
+.chat-input-area .btn {
+    padding: 0.5rem;
+    width: 3rem;
+    height: 3rem;
+    justify-content: center;
+}
+.chat-input-area .btn.active {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+}
+
+/* Utility */
+.hidden {
+    display: none;
+}
+.icon {
+    width: 1em;
+    height: 1em;
+    stroke-width: 2;
+    stroke: currentColor;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.property-card .property-card-image-wrapper {
+    position: relative;
+}
+.property-card img {
+    display: block;
+}
+.btn-icon {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background-color: hsla(var(--card) / 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid hsla(var(--secondary) / 0.5);
+    border-radius: 9999px;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--foreground));
+}
+.btn-icon:hover { background-color: hsla(var(--card) / 0.9); }
+.btn-icon.saved .icon { fill: hsl(var(--primary)); stroke: hsl(var(--primary)); }
+.btn-ai-why { background: none; border: 1px solid hsl(var(--primary)); color: hsl(var(--primary)); }
+.btn-ai-why:hover { background-color: hsla(var(--primary) / 0.1); }
+.btn-large {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+.btn-small {
+    padding: 0.25rem 0.75rem;
+}
+.btn-full-width {
+    width: 100%;
+    justify-content: center;
+}
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+/* Error Messages */
+.error-message {
+    color: #f44336;
+    font-size: 0.875rem;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+

@@ -1,5 +1,14 @@
 {
   "projects": {
-    "default": "innchat-6da18"
+    "default": "properteaseapp"
+  },
+  "targets": {
+    "properteaseapp": {
+      "hosting": {
+        "propertease-app": [
+          "properteaseapp"
+        ]
+      }
+    }
   }
 }

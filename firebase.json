@@ -24,6 +24,7 @@
     ]
   },
   "hosting": {
+    "target": "propertease-app",
     "public": "public",
     "ignore": [
       "firebase.json",

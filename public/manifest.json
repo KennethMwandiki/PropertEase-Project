@@ -1,0 +1,15 @@
+{
+    "//": "This file configures the web app manifest.",
+    "short_name": "PropertEase",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#222",
+    "theme_color": "#8B5CF6",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}

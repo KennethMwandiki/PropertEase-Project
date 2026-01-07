@@ -16,23 +16,23 @@ function initListings() {
     listingsContainer = document.getElementById('listings-container');
     loadingSpinner = document.getElementById('loading-spinner');
     emptyState = document.getElementById('empty-state');
-    
+
     // My listings elements
     myListingsBtn = document.getElementById('my-listings-btn');
     myListingsModal = document.getElementById('my-listings-modal');
     myListingsContainer = document.getElementById('my-listings-container');
     myListingsLoading = document.getElementById('my-listings-loading');
     myListingsEmpty = document.getElementById('my-listings-empty');
-    
+
     // Event listeners
     if (browseListingsBtn) {
         browseListingsBtn.addEventListener('click', loadAllListings);
     }
-    
+
     if (refreshListingsBtn) {
         refreshListingsBtn.addEventListener('click', loadAllListings);
     }
-    
+
     if (myListingsBtn) {
         myListingsBtn.addEventListener('click', openMyListings);
     }
@@ -76,11 +76,11 @@ async function deleteListing(listingId, userId) {
     if (!confirm("Are you sure you want to delete this listing?")) {
         return false;
     }
-    
+
     try {
         const listingRef = doc(window.db, "listings", listingId);
         const listingDoc = await getDoc(listingRef);
-        
+
         // Verify ownership
         if (listingDoc.exists() && listingDoc.data().userId === userId) {
             await deleteDoc(listingRef);
@@ -99,11 +99,11 @@ async function deleteListing(listingId, userId) {
 // Display listings in a container
 function displayListings(listings, container, showActions = false) {
     container.innerHTML = '';
-    
+
     if (listings.length === 0) {
         return;
     }
-    
+
     listings.forEach(listing => {
         const card = createListingCard(listing, showActions);
         container.appendChild(card);
@@ -115,32 +115,85 @@ function createListingCard(listing, showActions = false) {
     const card = document.createElement('div');
     card.className = 'property-card';
     card.dataset.listingId = listing.id;
-    
+
     const imageUrl = listing.imageUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400';
     const title = listing.title || 'Untitled Listing';
     const description = listing.description || 'No description available';
     const userEmail = listing.userEmail || 'Unknown';
-   const createdAt = listing.createdAt ? new Date(listing.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown date';
-    
+    const createdAt = listing.createdAt ? new Date(listing.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown date';
+    const locationHtml = listing.location ? `<div style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; color: hsl(var(--primary)); margin-bottom: 0.5rem; margin-top: 0.25rem;"><svg style="width: 1em; height: 1em;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${listing.location}</div>` : '';
+
     card.innerHTML = `
         <div class="property-card-image-wrapper">
             <img src="${imageUrl}" alt="${title}" style="width: 100%; height: 200px; object-fit: cover;">
         </div>
         <div class="property-card-body">
-            <h3>${title}</h3>
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <h3>${title}</h3>
+                <div id="smart-price-${listing.id}" class="magic-badge hidden" style="font-size: 0.7rem; background: hsla(280, 100%, 70%, 0.2); color: hsl(280, 100%, 70%); border: 1px solid hsla(280, 100%, 70%, 0.5); padding: 0.1rem 0.4rem; border-radius: 4px;">
+                    ✨ AI PRICE
+                </div>
+            </div>
+            ${locationHtml}
             <p style="color: hsl(var(--muted)); margin: 0.5rem 0;">${description.substring(0, 150)}${description.length > 150 ? '...' : ''}</p>
             <p style="font-size: 0.875rem; color: hsl(var(--muted)); margin-top: 1rem;">
                 Listed by ${userEmail}<br>
                 <span style="font-size: 0.75rem;">Posted on ${createdAt}</span>
             </p>
-            ${showActions ? `
-                <div class="property-card-tags" style="margin-top: 1rem;">
+            
+            <div class="property-card-tags" style="margin-top: 1rem; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-small a11y-describe-btn" title="Describe image for blind users">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> Describe
+                </button>
+                <button class="btn btn-secondary btn-small a11y-simplify-btn" title="Simplify text for cognitive ease">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg> Simplify
+                </button>
+                ${showActions ? `
                     <button class="btn btn-secondary btn-small delete-listing-btn" data-id="${listing.id}">Delete</button>
-                </div>
-            ` : ''}
+                ` : ''}
+            </div>
         </div>
     `;
-    
+
+    // Accessibility Listeners
+    const describeBtn = card.querySelector('.a11y-describe-btn');
+    const simplifyBtn = card.querySelector('.a11y-simplify-btn');
+    const cardDescription = card.querySelector('.property-card-body p');
+
+    describeBtn.addEventListener('click', async () => {
+        const img = card.querySelector('img');
+        if (img && window.aiHelper) {
+            const desc = await window.aiHelper.describeImage(null); // Passing null will trigger the multimodal logic in helper
+            // For this prototype, we'll alert the description or use TTS
+            alert("Image Description (Accessible):\n\n" + desc);
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(desc);
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    });
+
+    simplifyBtn.addEventListener('click', async () => {
+        if (window.aiHelper && cardDescription) {
+            const currentDesc = listing.description || "";
+            const simpleDesc = await window.aiHelper.simplifyText(currentDesc);
+            cardDescription.textContent = simpleDesc;
+            simplifyBtn.classList.add('hidden'); // Hide after use
+        }
+    });
+
+    // 3D Tour Listener
+    const tourBtn = card.querySelector('.btn-secondary.btn-small');
+    if (tourBtn && tourBtn.textContent.includes('3D Tour')) {
+        tourBtn.addEventListener('click', () => {
+            if (window.tour3D) {
+                window.tour3D.openTour(listing.id);
+            } else {
+                alert("3D Viewer is initializing. Please try again in a moment.");
+            }
+        });
+    }
+
     // Add delete event listener if actions are shown
     if (showActions) {
         const deleteBtn = card.querySelector('.delete-listing-btn');
@@ -158,7 +211,20 @@ function createListingCard(listing, showActions = false) {
             }
         });
     }
-    
+
+    // Integrated Smart Pricing (Finance AI)
+    if (window.financeAI && document.getElementById('toggle-smart-pricing')?.checked) {
+        const basePrice = parseInt(listing.price) || 500000; // Mock base price if missing
+        window.financeAI.getSmartPriceSuggestion(basePrice, 'high', 0.9).then(result => {
+            const badge = card.querySelector(`#smart-price-${listing.id}`);
+            if (badge) {
+                badge.classList.remove('hidden');
+                badge.title = result.reasoning;
+                badge.innerHTML = `✨ AI: $${result.suggestedPrice.toLocaleString()}`;
+            }
+        });
+    }
+
     return card;
 }
 
@@ -168,11 +234,11 @@ async function loadAllListings() {
     emptyState.classList.add('hidden');
     browseListingsBtn.classList.add('hidden');
     refreshListingsBtn.classList.remove('hidden');
-    
+
     const listings = await fetchAllListings();
-    
+
     loadingSpinner.classList.add('hidden');
-    
+
     if (listings.length === 0) {
         emptyState.classList.remove('hidden');
     } else {
@@ -187,17 +253,17 @@ async function openMyListings() {
         window.openModal('auth-modal');
         return;
     }
-    
+
     window.openModal('my-listings-modal');
-    
+
     myListingsLoading.classList.remove('hidden');
     myListingsEmpty.classList.add('hidden');
     myListingsContainer.innerHTML = '';
-    
+
     const listings = await fetchUserListings(window.currentUser.uid);
-    
+
     myListingsLoading.classList.add('hidden');
-    
+
     if (listings.length === 0) {
         myListingsEmpty.classList.remove('hidden');
     } else {

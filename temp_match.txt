@@ -1,0 +1,8 @@
+.ai-status {
+            font-size: 0.75rem;
+            color: hsl(var(--muted));
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        <h1>

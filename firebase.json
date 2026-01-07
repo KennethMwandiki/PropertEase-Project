@@ -23,6 +23,9 @@
       }
     ]
   },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "hosting": {
     "target": "propertease-app",
     "public": "public",

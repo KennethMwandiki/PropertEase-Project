@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public access to service desk sessions for the queue
+    match /chat_queue/{sessionId} {
+      allow read, create, update: if true;
+      allow delete: if false;
+    }
+    
+    // Allow public access to listings for browsing
+    match /listings/{listingId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

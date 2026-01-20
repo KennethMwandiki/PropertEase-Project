@@ -939,6 +939,7 @@
     <script src="js/ownership-verification.js" defer></script>
     <script src="js/user-verification.js" defer></script>
     <script src="js/maps.js" defer></script>
+    <script src="js/auth-manager.js" defer></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 </head>
 
@@ -1062,7 +1063,8 @@
                         </svg>
                         <h2>Discover Properties Near You</h2>
                     </div>
-                    <div id="google-map" style="width: 100%; height: 450px; border-radius: 0.5rem; background: hsl(var(--secondary)); display: flex; align-items: center; justify-content: center;">
+                    <div id="google-map"
+                        style="width: 100%; height: 450px; border-radius: 0.5rem; background: hsl(var(--secondary)); display: flex; align-items: center; justify-content: center;">
                         <span style="color: hsl(var(--muted));">Map is loading... (Google Maps API Key Required)</span>
                     </div>
                 </div>
@@ -1547,7 +1549,10 @@
                 signInWithEmailAndPassword,
                 signOut,
                 onAuthStateChanged,
-                updateProfile
+                updateProfile,
+                signInWithEmailAndPassword,
+                createUserWithEmailAndPassword,
+                signOut
             }
 
                 from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
@@ -1619,6 +1624,13 @@
             window.geminiModel = model;
             window.httpsCallable = httpsCallable;
 
+            // Global Auth methods for Manager
+            window.FirebaseLogout = {
+                signInWithEmailAndPassword,
+                createUserWithEmailAndPassword,
+                signOut
+            };
+
             window.Firestore = {
                 getDocs,
                 query,
@@ -1636,36 +1648,13 @@
             window.currentUser = null;
 
             // Auth State Observer
+            window.authManager = new AuthManager(auth, updateProfile);
+
             onAuthStateChanged(auth, (user) => {
-                window.currentUser = user;
-                updateUI();
+                window.authManager.onStateChanged(user);
             });
 
-            // UI Update Function
-            function updateUI() {
-                const authButtons = document.getElementById('auth-buttons'); // Note: this ID might need to be added to HTML if missing
-                const welcomeName = document.getElementById('welcome-name');
-                const userInfoNav = document.getElementById('user-info-nav');
-                const heroSubtitle = document.getElementById('hero-subtitle');
 
-                // Toggle auth buttons visibility based on class 'hidden'
-                // Assuming we have signin/signup buttons for logged out state
-                const signinTab = document.getElementById('signin-tab');
-
-                if (window.currentUser) {
-                    if (userInfoNav) userInfoNav.classList.remove('hidden');
-
-                    // Hide signin/signup buttons if they exist outside modal
-                    if (welcomeName) welcomeName.textContent = `Welcome, ${window.currentUser.displayName || 'User'}!`;
-
-                    if (heroSubtitle) heroSubtitle.textContent = `Welcome back, ${window.currentUser.displayName || 'User'}! Ready to find your next property?`;
-                }
-
-                else {
-                    if (userInfoNav) userInfoNav.classList.add('hidden');
-                    if (heroSubtitle) heroSubtitle.textContent = 'Discover, verify, and book properties with confidence using our AI-powered platform.';
-                }
-            }
 
             // Finance AI: Security Audit Orchestration
             function updateSecurityAudit() {
@@ -2170,62 +2159,7 @@
                 });
             });
 
-            // Sign In
-            if (signinForm) {
-                signinForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const email = document.getElementById('signin-email').value;
-                    const password = document.getElementById('signin-password').value;
 
-                    try {
-                        await signInWithEmailAndPassword(auth, email, password);
-                        window.closeModal('auth-modal');
-                    }
-
-                    catch (error) {
-                        alert("Sign in failed: " + error.message);
-                    }
-                });
-            }
-
-            // Sign Up
-            if (signupForm) {
-                signupForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const email = document.getElementById('signup-email').value;
-                    const password = document.getElementById('signup-password').value;
-                    const name = document.getElementById('signup-name').value;
-
-                    try {
-                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-                        await updateProfile(userCredential.user, {
-                            displayName: name
-                        });
-                        window.closeModal('auth-modal');
-                    }
-
-                    catch (error) {
-                        alert("Sign up failed: " + error.message);
-                    }
-                });
-            }
-
-            // Sign Out
-            const signOutBtn = document.getElementById('signout-btn');
-
-            if (signOutBtn) {
-                signOutBtn.addEventListener('click', async () => {
-                    try {
-                        await signOut(auth);
-                        alert("Signed out successfully.");
-                    }
-
-                    catch (error) {
-                        console.error("Sign out error", error);
-                    }
-                });
-            }
 
             // Service Desk handles the unified chat experience at the top-level script block.
             // Redundant demo chat logic removed.

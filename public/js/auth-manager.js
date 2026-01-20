@@ -116,6 +116,23 @@ class AuthManager {
             welcomeContainer.appendChild(badge);
         }
     }
+
+    /**
+     * Strategic Utility: Require Auth
+     * Wraps actions that require the user to be signed in.
+     */
+    requireAuth(action, context = "access this feature") {
+        if (this.currentUser) {
+            action();
+        } else {
+            alert(`Please Sign In or Sign Up to ${context}.`);
+            if (window.openModal) {
+                window.openModal('auth-modal');
+                const signinTab = document.getElementById('signin-tab');
+                if (signinTab) signinTab.click();
+            }
+        }
+    }
 }
 
 window.AuthManager = AuthManager;

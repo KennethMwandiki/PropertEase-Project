@@ -1222,6 +1222,11 @@
                         <input type="checkbox" id="a11y-cognitive"
                             onchange="window.a11yManager.updatePref('cognitiveEase', this.checked)">
                     </div>
+                    <div class="a11y-label-row">
+                        <label for="a11y-guided">Guided UI (Voice-First)</label>
+                        <input type="checkbox" id="a11y-guided"
+                            onchange="window.a11yManager.updatePref('guidedUI', this.checked)">
+                    </div>
                 </div>
 
                 <div class="a11y-label-section" style="border-bottom: none;">
@@ -1509,6 +1514,25 @@
                 </div>
 
                 <div class="profile-section" style="margin-bottom: 1.5rem;">
+                    <h3>Verified Purchasing Power</h3>
+                    <p style="font-size: 0.8rem; color: hsl(var(--muted)); margin-bottom: 1rem;">Simulated mortgage
+                        pre-approval based on AI financial analysis.</p>
+                    <div id="purchasing-power-box"
+                        style="padding: 1rem; background: hsla(200, 100%, 50%, 0.1); border-radius: 8px; border: 1px solid hsla(200, 100%, 50%, 0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 0.7rem; color: hsl(var(--muted));">Est. Pre-Approval</div>
+                                <div id="pre-approval-limit" style="font-weight: bold; font-size: 1.25rem;">$0</div>
+                            </div>
+                            <button id="refresh-finance-btn" class="btn btn-secondary btn-small"
+                                onclick="handleRefreshFinance()">Refresh</button>
+                        </div>
+                        <div id="finance-id" style="font-size: 0.6rem; color: hsl(var(--muted)); margin-top: 0.5rem;">
+                            ID: ---</div>
+                    </div>
+                </div>
+
+                <div class="profile-section" style="margin-bottom: 1.5rem;">
                     <h3>Premium Verification</h3>
                     <p style="font-size: 0.8rem; color: hsl(var(--muted)); margin-bottom: 1rem;">Fast-track your
                         identity verification for priority support and exclusive listings.</p>
@@ -1657,7 +1681,7 @@
 
 
             // Finance AI: Security Audit Orchestration
-            function updateSecurityAudit() {
+            async function updateSecurityAudit() {
                 const logContainer = document.getElementById('security-audit-log');
                 if (!logContainer || !window.financeAI) return;
 
@@ -1671,7 +1695,27 @@
                                                     <div style="font-size: 0.7rem; color: hsl(var(--muted-foreground));">${log.details || log.location} • ${log.date}</div>
                                                 </div>
                                             `).join('');
+
+                // Strategic Addition: Update Purchasing Power on heart-beat/sync
+                if (window.currentUser) {
+                    await handleRefreshFinance(false); // Silent refresh
+                }
             }
+
+            window.handleRefreshFinance = async function (showAlert = true) {
+                if (!window.currentUser || !window.financeAI) return;
+
+                if (showAlert) console.log("[Strategic] Manual finance refresh triggered.");
+
+                const data = await window.financeAI.verifyPurchasingPower(window.currentUser.uid);
+                const limitEl = document.getElementById('pre-approval-limit');
+                const idEl = document.getElementById('finance-id');
+
+                if (limitEl) limitEl.textContent = `$${data.preApprovalLimit.toLocaleString()}`;
+                if (idEl) idEl.textContent = `Pre-Approval ID: ${data.preApprovalId}`;
+
+                if (showAlert) alert(`Financial verification successful! Pre-approved for up to $${data.preApprovalLimit.toLocaleString()}`);
+            };
 
             // Override openModal to include security audit updates
             const originalOpenModal = window.openModal;

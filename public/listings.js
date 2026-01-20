@@ -148,13 +148,23 @@ function createListingCard(listing, showActions = false) {
                 <span style="font-size: 0.75rem;">Posted on ${createdAt}</span>
             </p>
 
-            <!-- Strategic Addition: AI Vibe Score -->
-            <div style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <div class="magic-badge" style="background: hsla(150, 100%, 50%, 0.1); color: hsl(150, 100%, 40%); border: 1px solid hsla(150, 100%, 50%, 0.3); font-size: 0.65rem; animation: none;">
-                    🍀 VIBE: URBAN PULSE 9.2
+            <!-- Strategic Addition: AI Vibe Scores & TCO -->
+            <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <div class="magic-badge" style="background: hsla(150, 100%, 50%, 0.1); color: hsl(150, 100%, 40%); border: 1px solid hsla(150, 100%, 50%, 0.3); font-size: 0.65rem; animation: none;">
+                        🍀 VIBE: URBAN PULSE 9.2
+                    </div>
+                    <div class="magic-badge" style="background: hsla(200, 100%, 50%, 0.1); color: hsl(200, 100%, 40%); border: 1px solid hsla(200, 100%, 50%, 0.3); font-size: 0.65rem; animation: none;">
+                        🔇 QUIET: 8.5
+                    </div>
+                    <div class="magic-badge" style="background: hsla(280, 100%, 50%, 0.1); color: hsl(280, 100%, 40%); border: 1px solid hsla(280, 100%, 50%, 0.3); font-size: 0.65rem; animation: none;">
+                        🚶 WALK: 94
+                    </div>
                 </div>
-                <div class="magic-badge" style="background: hsla(200, 100%, 50%, 0.1); color: hsl(200, 100%, 40%); border: 1px solid hsla(200, 100%, 50%, 0.3); font-size: 0.65rem; animation: none;">
-                    🔇 QUIET: 8.5
+                <!-- TCO (Total Cost of Ownership) -->
+                <div style="font-size: 0.75rem; color: hsl(var(--muted)); background: hsla(var(--secondary) / 0.5); padding: 0.5rem; border-radius: 4px; border: 1px dashed hsl(var(--muted));">
+                   <strong>Est. Monthly Cost (TCO):</strong> $2,450 
+                   <span style="font-size: 0.65rem; display: block;">Mortgage + Ins + Tax - Benefits</span>
                 </div>
             </div>
             
@@ -162,6 +172,10 @@ function createListingCard(listing, showActions = false) {
                 <!-- VIP Booking for Premium Users -->
                 <button class="btn btn-primary btn-small vip-booking-btn" style="background: linear-gradient(135deg, hsl(var(--primary)), hsl(280, 100%, 70%)); border: none;" onclick="handleVIPBooking('${listing.id}', '${title}')">
                     Schedule VIP Viewing
+                </button>
+                <!-- Investment Planner -->
+                <button class="btn btn-secondary btn-small roi-planner-btn" onclick="handleROIPlanner('${listing.id}', '${title}')">
+                    📊 ROI Planner
                 </button>
 
                 <button class="btn btn-secondary btn-small a11y-describe-btn" title="Describe image for blind users">
@@ -385,21 +399,40 @@ window.switchToSignup = switchToSignup;
 
 // 11. Strategic Optimization: VIP Booking Handler
 window.handleVIPBooking = function (listingId, title) {
-    const isPremium = localStorage.getItem('is_premium_user') === 'true';
+    if (!window.authManager) return;
 
-    if (!isPremium) {
-        alert("VIP Viewing is a Premium feature. Please verify your identity in 'My Profile' to unlock VIP access.");
-        // Redirect to profile modal to encourage verification
-        if (window.openModal) window.openModal('profile-modal');
-        return;
-    }
+    window.authManager.requireAuth(() => {
+        const isPremium = localStorage.getItem('is_premium_user') === 'true';
 
-    // Trigger Virtual Concierge for booking flow
-    if (window.openModal) window.openModal('chat-modal');
+        if (!isPremium) {
+            alert("VIP Viewing is a Premium feature. Please verify your identity in 'My Profile' to unlock VIP access.");
+            if (window.openModal) window.openModal('profile-modal');
+            return;
+        }
 
-    const bookingMsg = `I want to schedule a VIP viewing for "${title}" (ID: ${listingId}).`;
-    if (window.serviceDesk) {
-        window.serviceDesk.appendMessage('user', bookingMsg);
-        window.serviceDesk.handleConciergeIntent(bookingMsg);
-    }
+        if (window.openModal) window.openModal('chat-modal');
+
+        const bookingMsg = `I want to schedule a VIP viewing for "${title}" (ID: ${listingId}).`;
+        if (window.serviceDesk) {
+            window.serviceDesk.appendMessage('user', bookingMsg);
+            window.serviceDesk.handleConciergeIntent(bookingMsg);
+        }
+    }, "schedule a VIP viewing");
+};
+
+// 12. Strategic Optimization: ROI Planner Handler
+window.handleROIPlanner = function (listingId, title) {
+    if (!window.authManager) return;
+
+    window.authManager.requireAuth(() => {
+        alert(`Initializing AI Investment Planner for "${title}"... (ROI Data Incoming)`);
+        if (window.openModal) window.openModal('chat-modal');
+
+        const roiMsg = `Analyze the ROI for property ID "${listingId}". Project 5-year appreciation and rental yield.`;
+        if (window.serviceDesk) {
+            window.serviceDesk.appendMessage('user', roiMsg);
+            // Concierge handles financial intents
+            window.serviceDesk.handleConciergeIntent(roiMsg);
+        }
+    }, "access the ROI Investment Planner");
 };

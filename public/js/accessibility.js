@@ -11,6 +11,7 @@ const defaultPrefs = {
     dyslexiaFriendly: false,
     fontSize: 'normal', // small, normal, large, extra-large
     cognitiveEase: false,
+    guidedUI: false,
     screenReaderOptimized: false
 };
 
@@ -74,6 +75,11 @@ class AccessibilityManager {
             body.classList.remove('cognitive-ease');
         }
 
+        // Guided UI (Voice Feedback)
+        if (this.prefs.guidedUI) {
+            this.speak("Guided user interface mode activated. I will assist you with navigation.");
+        }
+
         // Dispatch event for other components to react
         window.dispatchEvent(new CustomEvent('a11y-prefs-changed', { detail: this.prefs }));
     }
@@ -109,6 +115,15 @@ class AccessibilityManager {
             this.prefs[key] = !this.prefs[key];
             this.savePrefs();
         }
+    }
+
+    speak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
     }
 }
 

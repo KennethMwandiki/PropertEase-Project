@@ -72,7 +72,7 @@ class FinanceAI {
      */
     async generateValuationReport(propertyId) {
         console.log(`[Finance AI] Generating valuation report for property ${propertyId}...`);
-        
+
         // Simulating data retrieval from a "Data Warehouse" (e.g. BigQuery)
         const historicalSales = [
             { year: 2023, avgPrice: 450000 },
@@ -94,6 +94,51 @@ class FinanceAI {
             marketCondition: currentMarketCondition,
             historicalData: historicalSales,
             confidenceScore: 0.94,
+            timestamp: new Date().toISOString()
+        };
+    }
+    /**
+     * Strategic Component: Verified Purchasing Power
+     * Validates user financial readiness (Simulated mortgage pre-approval check).
+     */
+    async verifyPurchasingPower(userId) {
+        console.log(`[Finance AI] Verifying purchasing power for user ${userId}...`);
+
+        // Simulating credit & income check logic (SLA-driven)
+        const creditScore = Math.floor(Math.random() * (850 - 650) + 650);
+        const preApprovalLimit = creditScore > 750 ? 1200000 : 600000;
+
+        return {
+            status: 'verified',
+            creditScoreTier: creditScore > 800 ? 'Excellent' : 'Good',
+            preApprovalLimit,
+            preApprovalId: `PRE-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+            timestamp: new Date().toISOString()
+        };
+    }
+
+    /**
+     * Strategic Component: Smart Contract Escrow
+     * Transition from title checks to atomic transactions.
+     */
+    async initiateEscrow(propertyId, buyerId, sellerId, amount) {
+        console.log(`[Finance AI] Initiating Smart Contract Escrow for property ${propertyId}...`);
+
+        const escrowId = `ESC-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
+        // Simulate Hyperledger Fabric Chaincode execution
+        return {
+            escrowId,
+            status: 'locked',
+            blockchainTxId: `0x${Math.random().toString(16).substr(2, 40)}`,
+            buyerId,
+            sellerId,
+            amount,
+            conditions: [
+                'Blockchain title verification passed',
+                'Inspection report signed',
+                'Funds deposited'
+            ],
             timestamp: new Date().toISOString()
         };
     }

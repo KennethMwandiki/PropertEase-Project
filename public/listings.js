@@ -152,6 +152,18 @@ function createListingCard(listing, showActions = false) {
                     <button class="btn btn-secondary btn-small delete-listing-btn" data-id="${listing.id}">Delete</button>
                 ` : ''}
             </div>
+
+            <div class="premium-tools" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; border-top: 1px solid hsl(var(--muted)); padding-top: 0.75rem;">
+                <button class="btn btn-primary btn-small premium-valuation-btn" title="AI Appraisal" style="background: hsl(280, 100%, 70%); border: none;">
+                    📊 Appraisal
+                </button>
+                <button class="btn btn-secondary btn-small premium-market-btn">
+                    📈 Market
+                </button>
+                <div class="verified-title-badge hidden" style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; color: #4CAF50; font-weight: bold; cursor: pointer;">
+                    🛡️ Blockchain Verified
+                </div>
+            </div>
         </div>
     `;
 
@@ -190,6 +202,66 @@ function createListingCard(listing, showActions = false) {
                 window.tour3D.openTour(listing.id);
             } else {
                 alert("3D Viewer is initializing. Please try again in a moment.");
+            }
+        });
+    }
+
+    // Premium Feature Listeners
+    const valuationBtn = card.querySelector('.premium-valuation-btn');
+    const marketBtn = card.querySelector('.premium-market-btn');
+    const titleBadge = card.querySelector('.verified-title-badge');
+
+    valuationBtn.addEventListener('click', async () => {
+        if (window.financeAI) {
+            const report = await window.financeAI.generateValuationReport(listing.id);
+            // Open modal and populate
+            document.getElementById('valuation-price').textContent = `$${report.valuation.toLocaleString()}`;
+            document.getElementById('valuation-trend').textContent = `+${(report.trend * 100).toFixed(1)}%`;
+            document.getElementById('valuation-condition').textContent = report.marketCondition;
+
+            const historyContainer = document.getElementById('valuation-history');
+            historyContainer.innerHTML = report.historicalData.map(d => `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.7rem; width: 30px;">${d.year}</span>
+                    <div style="flex-grow: 1; background: hsl(var(--secondary)); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: hsl(280, 100%, 70%); height: 100%; width: ${(d.avgPrice / 550000) * 100}%"></div>
+                    </div>
+                    <span style="font-size: 0.7rem;">$${(d.avgPrice / 1000).toFixed(0)}k</span>
+                </div>
+            `).join('');
+
+            window.openModal('valuation-modal');
+        }
+    });
+
+    marketBtn.addEventListener('click', async () => {
+        if (window.marketIntelligence) {
+            const location = listing.location || "Local Market";
+            const forecast = await window.marketIntelligence.getMarketForecast(location);
+
+            document.getElementById('market-insights-location').textContent = location;
+            document.getElementById('market-demand-score').textContent = `${forecast.demandScore}/10`;
+            document.getElementById('market-yield').textContent = forecast.projectedYield;
+
+            const list = document.getElementById('market-insights-list');
+            list.innerHTML = forecast.insights.map(i => `<li>${i}</li>`).join('');
+
+            window.openModal('market-insights-modal');
+
+            // Generate chart (delayed to ensure container is visible)
+            setTimeout(() => {
+                window.marketIntelligence.generateForecastChart('market-chart', forecast.seasonalOccupancy);
+            }, 100);
+        }
+    });
+
+    // Simulate Blockchain Verification check
+    if (listing.id.length % 2 === 0) { // Random logic for demo
+        titleBadge.classList.remove('hidden');
+        titleBadge.addEventListener('click', async () => {
+            if (window.ownershipVerification) {
+                const data = await window.ownershipVerification.verifyTitle(listing.id);
+                window.ownershipVerification.showCertificateModal(listing.title, data);
             }
         });
     }

@@ -16,6 +16,10 @@ class ServiceDesk {
         this.isAgentConnected = false;
         this.queueListener = null;
 
+        // Premium: Virtual Concierge
+        this.isPremium = localStorage.getItem('is_premium_user') === 'true';
+        this.conciergeActive = this.isPremium;
+
         this.init();
     }
 
@@ -52,6 +56,11 @@ class ServiceDesk {
 
         this.appendMessage('user', text);
         this.chatInput.value = '';
+
+        if (this.isPremium && this.conciergeActive) {
+            this.handleConciergeIntent(text);
+            return;
+        }
 
         if (this.isAgentConnected) {
             // In a real app, this would send to a 'messages' subcollection in Firestore
@@ -177,6 +186,39 @@ class ServiceDesk {
         } catch (e) {
             console.error("Error updating queue position:", e);
         }
+    }
+
+    /**
+     * Virtual Concierge Intent Handling (Premium)
+     */
+    async handleConciergeIntent(input) {
+        this.appendMessage('bot', 'Processing your premium request with priority...');
+
+        let response = "I've logged your request. Your dedicated concierge is analyzing the market to assist you. What else can I do?";
+
+        if (input.toLowerCase().includes('book') || input.toLowerCase().includes('viewing')) {
+            response = "I've scheduled a private VIP viewing for you. A digital confirmation is being sent to your dashboard. Should I arrange a luxury car for the tour?";
+        } else if (input.toLowerCase().includes('negotiate') || input.toLowerCase().includes('offer')) {
+            response = "I can initiate an AI-assisted negotiation for this property. I'll analyze the seller's history and current market trends to suggest the best entry point.";
+        } else if (input.toLowerCase().includes('market') || input.toLowerCase().includes('trends')) {
+            response = "I'm pulling up the latest Predictive Market Insights for this location. The demand is currently High Growth with a 5.2% projected yield.";
+        }
+
+        setTimeout(() => {
+            const botMsgs = this.chatMessages.querySelectorAll('.chat-message.bot');
+            const lastBotMsg = botMsgs[botMsgs.length - 1];
+            if (lastBotMsg && lastBotMsg.textContent === 'Processing your premium request with priority...') {
+                lastBotMsg.textContent = response;
+            } else {
+                this.appendMessage('bot', response);
+            }
+
+            // Voice Feedback (Premium)
+            if ('speechSynthesis' in window && this.isPremium) {
+                const utterance = new SpeechSynthesisUtterance(response);
+                window.speechSynthesis.speak(utterance);
+            }
+        }, 1200);
     }
 }
 

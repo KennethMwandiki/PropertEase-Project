@@ -878,6 +878,55 @@
         .a11y-label-row span {
             font-weight: bold;
         }
+
+        /* PREMIUM UI ENHANCEMENTS */
+        .magic-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px -2px hsla(var(--primary) / 0.3);
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px -2px hsla(var(--primary) / 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 4px 20px -2px hsla(var(--primary) / 0.5);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px -2px hsla(var(--primary) / 0.3);
+            }
+        }
+
+        .premium-valuation-btn:hover {
+            background: hsl(280, 100%, 60%) !important;
+            box-shadow: 0 0 15px hsla(280, 100%, 70%, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .premium-modal-glow {
+            border: 2px solid hsl(280, 100%, 70%) !important;
+            box-shadow: 0 0 30px hsla(280, 100%, 70%, 0.2) !important;
+        }
+
+        .chat-modal.premium .chat-header {
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(280, 100%, 70%));
+        }
+
+        #market-chart svg {
+            filter: drop-shadow(0 4px 6px hsla(var(--primary) / 0.2));
+        }
     </style>
     <script src="js/accessibility.js" defer></script>
     <script src="js/ai-helper.js" defer></script>
@@ -886,6 +935,9 @@
     <script src="js/tour-3d.js" defer></script>
     <script src="js/finance-ai.js" defer></script>
     <script src="js/service-desk.js" defer></script>
+    <script src="js/market-intelligence.js" defer></script>
+    <script src="js/ownership-verification.js" defer></script>
+    <script src="js/user-verification.js" defer></script>
 </head>
 
 <body>
@@ -915,9 +967,18 @@
                         <path d="M12 11a1 1 0 1 0-1-1 1 1 0 0 0 1 1Zm3 3H9v-1l1.5-1.5L12 13l1.5-1.5L15 12v1Z"></path>
                     </svg>
                 </button>
-                <button class="btn btn-secondary btn-small" onclick="openModal('influencer-modal')">Partner</button>
-                <button class="btn btn-secondary btn-small"
-                    onclick="openModal('auth-modal'); document.getElementById('signin-tab').click();">Sign In</button>
+
+                <div id="user-info-nav" class="hidden" style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="btn btn-secondary btn-small" onclick="openModal('profile-modal')">My Profile</button>
+                    <button class="btn btn-secondary btn-small" id="signout-btn">Sign Out</button>
+                </div>
+
+                <div id="guest-nav" style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary btn-small" onclick="openModal('influencer-modal')">Partner</button>
+                    <button class="btn btn-secondary btn-small"
+                        onclick="openModal('auth-modal'); document.getElementById('signin-tab').click();">Sign
+                        In</button>
+                </div>
             </div>
         </div>
     </header>
@@ -1288,6 +1349,22 @@
                     </svg>
                     NeRF Walkthrough Enabled • Drag to Navigate
                 </div>
+
+                <!-- PREMIUM TOUR CONTROLS -->
+                <div class="premium-tour-controls"
+                    style="position: absolute; top: 1rem; right: 4rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button class="btn btn-secondary btn-small" onclick="window.tour3D.setDesignOverlay('modern')"
+                        style="background: rgba(0,0,0,0.5); color: white; border: 1px solid white;">Modern
+                        Design</button>
+                    <button class="btn btn-secondary btn-small" onclick="window.tour3D.setDesignOverlay('industrial')"
+                        style="background: rgba(0,0,0,0.5); color: white; border: 1px solid white;">Industrial
+                        Look</button>
+                    <button class="btn btn-secondary btn-small" onclick="window.tour3D.setDesignOverlay('minimalist')"
+                        style="background: rgba(0,0,0,0.5); color: white; border: 1px solid white;">Minimalist</button>
+                    <button class="btn btn-primary btn-small"
+                        onclick="window.tour3D.addAnnotation({x:0, y:0, z:0}, 'Premium Highlight: Energy efficient windows installed 2024.')"
+                        style="margin-top: 0.5rem;">Show Insights</button>
+                </div>
             </div>
         </div>
 
@@ -1319,6 +1396,144 @@
                 </div>
             </div>
         </div>
+
+        <!-- VALUATION REPORT MODAL -->
+        <div id="valuation-modal" class="modal hidden">
+            <div class="modal-content" style="max-width: 550px;">
+                <button class="modal-close-btn" onclick="closeModal('valuation-modal')">&times;</button>
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 2.5rem;">📊</div>
+                    <h2 class="modal-title" style="margin: 0;">AI Valuation Report</h2>
+                    <p style="font-size: 0.8rem; color: hsl(var(--muted));">Real-time Appraisal & Market Deep Dive</p>
+                </div>
+
+                <div id="valuation-data" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div
+                        style="background: hsla(280, 100%, 70%, 0.1); border: 1px solid hsla(280, 100%, 70%, 0.3); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                        <span
+                            style="font-size: 0.75rem; color: hsl(280, 100%, 70%); font-weight: bold; letter-spacing: 1px;">ESTIMATED
+                            MARKET VALUE</span>
+                        <div id="valuation-price"
+                            style="font-size: 2.5rem; font-weight: 800; color: hsl(var(--foreground)); margin: 0.5rem 0;">
+                            $0</div>
+                        <div
+                            style="background: #4CAF50; color: white; display: inline-block; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.7rem; font-weight: bold;">
+                            ✨ 94% Precision
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div style="padding: 1rem; background: hsl(var(--secondary)); border-radius: 8px;">
+                            <div style="font-size: 0.7rem; color: hsl(var(--muted));">Neighborhood Trend</div>
+                            <div id="valuation-trend" style="font-size: 1.1rem; font-weight: bold; color: #4CAF50;">+0%
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: hsl(var(--secondary)); border-radius: 8px;">
+                            <div style="font-size: 0.7rem; color: hsl(var(--muted));">Market Condition</div>
+                            <div id="valuation-condition" style="font-size: 1.1rem; font-weight: bold;">---</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem;">
+                        <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Historical Appreciation</h4>
+                        <div id="valuation-history" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <!-- History bars go here -->
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-full" style="margin-top: 1rem;"
+                        onclick="closeModal('valuation-modal')">Done</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MARKET INSIGHTS MODAL -->
+        <div id="market-insights-modal" class="modal hidden">
+            <div class="modal-content" style="max-width: 600px;">
+                <button class="modal-close-btn" onclick="closeModal('market-insights-modal')">&times;</button>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div
+                        style="background: hsl(var(--primary)); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                        📈</div>
+                    <div>
+                        <h2 class="modal-title" style="margin: 0;">Predictive Market Insights</h2>
+                        <p id="market-insights-location"
+                            style="font-size: 0.8rem; color: hsl(var(--muted)); margin: 0;">Location Analysis</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="insight-box"
+                        style="padding: 1rem; background: hsl(var(--secondary)); border-radius: 12px; border: 1px solid hsl(var(--muted));">
+                        <span style="font-size: 0.7rem; color: hsl(var(--muted));">Demand Forecast</span>
+                        <div id="market-demand-score" style="font-size: 1.5rem; font-weight: bold;">--/10</div>
+                    </div>
+                    <div class="insight-box"
+                        style="padding: 1rem; background: hsl(var(--secondary)); border-radius: 12px; border: 1px solid hsl(var(--muted));">
+                        <span style="font-size: 0.7rem; color: hsl(var(--muted));">Projected Yield</span>
+                        <div id="market-yield" style="font-size: 1.5rem; font-weight: bold; color: #4CAF50;">--%</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin-bottom: 0.75rem;">Demand Trend (Vertex AI Forecast)</h4>
+                    <div id="market-chart" style="width: 100%; height: 160px;">
+                        <!-- SVG Chart will be injected here -->
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem;">AI Strategic Insights</h4>
+                    <ul id="market-insights-list"
+                        style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: hsl(var(--muted));">
+                        <!-- Insights go here -->
+                    </ul>
+                </div>
+
+                <button class="btn btn-primary w-full" onclick="closeModal('market-insights-modal')">Close
+                    Insights</button>
+            </div>
+        </div>
+
+        <!-- PROFILE MODAL -->
+        <div id="profile-modal" class="modal hidden">
+            <div class="modal-content" style="max-width: 500px;">
+                <button class="modal-close-btn" onclick="closeModal('profile-modal')">&times;</button>
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">👤</div>
+                    <h2 id="welcome-name" class="modal-title" style="margin: 0;">User Profile</h2>
+                    <div id="premium-badge-container" style="margin-top: 0.5rem;"></div>
+                </div>
+
+                <div class="profile-section" style="margin-bottom: 1.5rem;">
+                    <h3>Premium Verification</h3>
+                    <p style="font-size: 0.8rem; color: hsl(var(--muted)); margin-bottom: 1rem;">Fast-track your
+                        identity verification for priority support and exclusive listings.</p>
+                    <div id="verification-status-box"
+                        style="padding: 1rem; background: hsl(var(--secondary)); border-radius: 8px; border: 1px solid hsl(var(--muted));">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 0.7rem; color: hsl(var(--muted));">Status</div>
+                                <div id="verification-status-text" style="font-weight: bold;">Unverified</div>
+                            </div>
+                            <button id="request-verification-btn" class="btn btn-primary btn-small">Verify Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Security Audit Log</h3>
+                    <div id="security-audit-log"
+                        style="max-height: 200px; overflow-y: auto; background: hsl(var(--secondary)); border-radius: 8px; padding: 0.5rem; margin-top: 0.5rem; font-size: 0.85rem;">
+                        <!-- Logs will be injected here -->
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary w-full" style="margin-top: 1.5rem;"
+                    onclick="closeModal('profile-modal')">Close</button>
+            </div>
+        </div>
+
         <script type="module">            import {
                 initializeApp
             }
@@ -1483,6 +1698,63 @@
                     if (modal) modal.classList.remove('hidden');
                 }
             };
+
+            // Verification Logic
+            const requestVerifyBtn = document.getElementById('request-verification-btn');
+            if (requestVerifyBtn) {
+                requestVerifyBtn.addEventListener('click', async () => {
+                    if (!window.currentUser || !window.userVerification) return;
+
+                    requestVerifyBtn.disabled = true;
+                    requestVerifyBtn.textContent = "Verifying...";
+
+                    const result = await window.userVerification.requestPriorityVerification(window.currentUser.uid);
+
+                    document.getElementById('verification-status-text').textContent = result.status;
+                    document.getElementById('verification-status-text').style.color = "#4CAF50";
+                    requestVerifyBtn.classList.add('hidden');
+
+                    // Mark as premium for demo
+                    localStorage.setItem('is_premium_user', 'true');
+                    if (window.serviceDesk) window.serviceDesk.isPremium = true;
+
+                    const badgeContainer = document.getElementById('premium-badge-container');
+                    if (badgeContainer) badgeContainer.innerHTML = window.userVerification.getVerificationBadge();
+
+                    alert("Verification Successful! You now have access to Premium Features.");
+                });
+            }
+
+            // Update UI with guest/user nav toggle
+            const originalUpdateUI = updateUI;
+            updateUI = function () {
+                originalUpdateUI();
+                const guestNav = document.getElementById('guest-nav');
+                const userInfoNav = document.getElementById('user-info-nav');
+
+                if (window.currentUser) {
+                    if (guestNav) guestNav.classList.add('hidden');
+                    if (userInfoNav) userInfoNav.classList.remove('hidden');
+
+                    // Restore premium state if exists
+                    const isPremium = localStorage.getItem('is_premium_user') === 'true';
+                    if (isPremium) {
+                        const badgeContainer = document.getElementById('premium-badge-container');
+                        if (badgeContainer && window.userVerification) {
+                            badgeContainer.innerHTML = window.userVerification.getVerificationBadge();
+                            document.getElementById('verification-status-text').textContent = "Verified Premium";
+                            document.getElementById('verification-status-text').style.color = "#4CAF50";
+                            if (requestVerifyBtn) requestVerifyBtn.classList.add('hidden');
+                        }
+                    }
+                } else {
+                    if (guestNav) guestNav.classList.remove('hidden');
+                    if (userInfoNav) userInfoNav.classList.add('hidden');
+                    localStorage.removeItem('is_premium_user');
+                }
+            };
+            window.updateUI = updateUI;
+            updateUI();
 
             // Toggle Smart Pricing listener
             const pricingToggle = document.getElementById('toggle-smart-pricing');

@@ -26,6 +26,9 @@
   "firestore": {
     "rules": "firestore.rules"
   },
+  "storage": {
+    "rules": "storage.rules"
+  },
   "hosting": {
     "target": "propertease-app",
     "public": "public",

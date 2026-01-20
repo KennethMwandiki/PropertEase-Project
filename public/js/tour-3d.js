@@ -9,6 +9,8 @@ class Tour3DViewer {
         this.scene = null;
         this.camera = null;
         this.renderer = null;
+        this.annotations = [];
+        this.currentOverlay = 'none';
     }
 
     init(containerId) {
@@ -100,6 +102,52 @@ class Tour3DViewer {
             modal.classList.remove('hidden');
             this.init('tour-3d-canvas');
         }
+    }
+
+    /**
+     * Premium Feature: Interactive Annotations
+     */
+    addAnnotation(position, text) {
+        console.log(`[3D Tour] Adding annotation: "${text}"`);
+        this.annotations.push({ position, text });
+        // In a real implementation, we would create a THREE.Sprite or CSS2DObject
+        alert(`Tour Insight: ${text}`);
+    }
+
+    /**
+     * Premium Feature: NeRF-based Design Overlays
+     * Allows users to swap furniture styles or room finishes.
+     */
+    async setDesignOverlay(theme) {
+        console.log(`[3D Tour] Applying ${theme} design overlay...`);
+        this.currentOverlay = theme;
+
+        const loader = new THREE.TextureLoader();
+        let textureUrl = '';
+
+        switch (theme) {
+            case 'modern':
+                textureUrl = 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2000&q=80';
+                break;
+            case 'industrial':
+                textureUrl = 'https://images.unsplash.com/photo-1541123437800-1bb1317badc2?auto=format&fit=crop&w=2000&q=80';
+                break;
+            case 'minimalist':
+                textureUrl = 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=2000&q=80';
+                break;
+            default:
+                textureUrl = 'https://images.unsplash.com/photo-1513584684374-8bdb7489feef?auto=format&fit=crop&w=2000&q=80';
+        }
+
+        return new Promise((resolve) => {
+            loader.load(textureUrl, (texture) => {
+                if (this.scene && this.scene.children[0]) {
+                    this.scene.children[0].material.map = texture;
+                    this.scene.children[0].material.needsUpdate = true;
+                }
+                resolve();
+            });
+        });
     }
 }
 

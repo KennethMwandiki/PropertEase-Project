@@ -147,8 +147,23 @@ function createListingCard(listing, showActions = false) {
                 Listed by ${userEmail}<br>
                 <span style="font-size: 0.75rem;">Posted on ${createdAt}</span>
             </p>
+
+            <!-- Strategic Addition: AI Vibe Score -->
+            <div style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <div class="magic-badge" style="background: hsla(150, 100%, 50%, 0.1); color: hsl(150, 100%, 40%); border: 1px solid hsla(150, 100%, 50%, 0.3); font-size: 0.65rem; animation: none;">
+                    🍀 VIBE: URBAN PULSE 9.2
+                </div>
+                <div class="magic-badge" style="background: hsla(200, 100%, 50%, 0.1); color: hsl(200, 100%, 40%); border: 1px solid hsla(200, 100%, 50%, 0.3); font-size: 0.65rem; animation: none;">
+                    🔇 QUIET: 8.5
+                </div>
+            </div>
             
             <div class="property-card-tags" style="margin-top: 1rem; flex-wrap: wrap;">
+                <!-- VIP Booking for Premium Users -->
+                <button class="btn btn-primary btn-small vip-booking-btn" style="background: linear-gradient(135deg, hsl(var(--primary)), hsl(280, 100%, 70%)); border: none;" onclick="handleVIPBooking('${listing.id}', '${title}')">
+                    Schedule VIP Viewing
+                </button>
+
                 <button class="btn btn-secondary btn-small a11y-describe-btn" title="Describe image for blind users">
                     <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> Describe
                 </button>
@@ -367,3 +382,24 @@ if (document.readyState === 'loading') {
 
 // Export functions to global scope for inline onclick handlers
 window.switchToSignup = switchToSignup;
+
+// 11. Strategic Optimization: VIP Booking Handler
+window.handleVIPBooking = function (listingId, title) {
+    const isPremium = localStorage.getItem('is_premium_user') === 'true';
+
+    if (!isPremium) {
+        alert("VIP Viewing is a Premium feature. Please verify your identity in 'My Profile' to unlock VIP access.");
+        // Redirect to profile modal to encourage verification
+        if (window.openModal) window.openModal('profile-modal');
+        return;
+    }
+
+    // Trigger Virtual Concierge for booking flow
+    if (window.openModal) window.openModal('chat-modal');
+
+    const bookingMsg = `I want to schedule a VIP viewing for "${title}" (ID: ${listingId}).`;
+    if (window.serviceDesk) {
+        window.serviceDesk.appendMessage('user', bookingMsg);
+        window.serviceDesk.handleConciergeIntent(bookingMsg);
+    }
+};

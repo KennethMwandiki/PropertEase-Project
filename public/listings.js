@@ -100,6 +100,13 @@ async function deleteListing(listingId, userId) {
 function displayListings(listings, container, showActions = false) {
     container.innerHTML = '';
 
+    // Global export for Map integration
+    window.currentListings = listings;
+
+    if (window.mapManager && typeof window.mapManager.syncWithListings === 'function') {
+        window.mapManager.syncWithListings(listings);
+    }
+
     if (listings.length === 0) {
         return;
     }

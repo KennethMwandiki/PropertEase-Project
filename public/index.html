@@ -938,6 +938,8 @@
     <script src="js/market-intelligence.js" defer></script>
     <script src="js/ownership-verification.js" defer></script>
     <script src="js/user-verification.js" defer></script>
+    <script src="js/maps.js" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 </head>
 
 <body>
@@ -1060,10 +1062,9 @@
                         </svg>
                         <h2>Discover Properties Near You</h2>
                     </div>
-                    <div class="map-placeholder">
-                        <p>Interactive Map Placeholder</p>
-                    </div><iframe src="https://your-3d-tour-provider.com/tour/123" width="100%" height="400px">3D
-                        Tour</iframe>
+                    <div id="google-map" style="width: 100%; height: 450px; border-radius: 0.5rem; background: hsl(var(--secondary)); display: flex; align-items: center; justify-content: center;">
+                        <span style="color: hsl(var(--muted));">Map is loading... (Google Maps API Key Required)</span>
+                    </div>
                 </div>
                 < !-- CTA: Become a Host -->
                     <section class="cta-section container">

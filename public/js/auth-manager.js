@@ -48,14 +48,24 @@ class AuthManager {
         if (this.signupForm) {
             this.signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                console.log("[AuthManager] Sign up form submitted.");
+                
                 const email = document.getElementById('signup-email').value;
                 const password = document.getElementById('signup-password').value;
                 const name = document.getElementById('signup-name').value;
+                
+                console.log(`[AuthManager] Attempting to create user: ${email}`);
+                
                 try {
                     const userCredential = await window.FirebaseLogout.createUserWithEmailAndPassword(this.auth, email, password);
+                    console.log("[AuthManager] User created successfully. Updating profile...");
+                    
                     await this.updateProfile(userCredential.user, { displayName: name });
+                    console.log("[AuthManager] Profile updated. Closing modal.");
+                    
                     window.closeModal('auth-modal');
                 } catch (error) {
+                    console.error("[AuthManager] Sign up error:", error);
                     alert("Sign up failed: " + error.message);
                 }
             });

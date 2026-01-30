@@ -52,12 +52,18 @@ class ServiceDesk {
     async handleSendMessage() {
         if (!this.chatInput) return;
         const text = this.chatInput.value.trim();
-        if (!text) return;
+        console.log(`[ServiceDesk] Attempting to send message: "${text}"`);
+
+        if (!text) {
+            console.log("[ServiceDesk] Message is empty, ignoring.");
+            return;
+        }
 
         this.appendMessage('user', text);
         this.chatInput.value = '';
 
         if (this.isPremium && this.conciergeActive) {
+            console.log("[ServiceDesk] Premium Concierge active, handling intent...");
             this.handleConciergeIntent(text);
             return;
         }

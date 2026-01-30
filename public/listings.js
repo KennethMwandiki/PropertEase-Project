@@ -381,9 +381,23 @@ async function openMyListings() {
 
 // Helper function for switchToSignup (to be called from auth buttons)
 function switchToSignup() {
+    console.log("[Listings] Switching to Sign Up tab...");
     const signupTab = document.getElementById('signup-tab');
     if (signupTab) {
         signupTab.click();
+    } else {
+        console.error("[Listings] signup-tab not found!");
+    }
+}
+
+// Helper function for switchToSignin
+function switchToSignin() {
+    console.log("[Listings] Switching to Sign In tab...");
+    const signinTab = document.getElementById('signin-tab');
+    if (signinTab) {
+        signinTab.click();
+    } else {
+        console.error("[Listings] signin-tab not found!");
     }
 }
 
@@ -396,20 +410,27 @@ if (document.readyState === 'loading') {
 
 // Export functions to global scope for inline onclick handlers
 window.switchToSignup = switchToSignup;
+window.switchToSignin = switchToSignin;
 
 // 11. Strategic Optimization: VIP Booking Handler
 window.handleVIPBooking = function (listingId, title) {
-    if (!window.authManager) return;
+    console.log(`[Listings] VIP Booking triggered for: ${title} (${listingId})`);
+    if (!window.authManager) {
+        console.warn("[Listings] AuthManager not found!");
+        return;
+    }
 
     window.authManager.requireAuth(() => {
         const isPremium = localStorage.getItem('is_premium_user') === 'true';
 
         if (!isPremium) {
+            console.log("[Listings] Non-premium user attempting VIP booking.");
             alert("VIP Viewing is a Premium feature. Please verify your identity in 'My Profile' to unlock VIP access.");
             if (window.openModal) window.openModal('profile-modal');
             return;
         }
 
+        console.log("[Listings] Opening chat for VIP booking...");
         if (window.openModal) window.openModal('chat-modal');
 
         const bookingMsg = `I want to schedule a VIP viewing for "${title}" (ID: ${listingId}).`;
@@ -420,12 +441,17 @@ window.handleVIPBooking = function (listingId, title) {
     }, "schedule a VIP viewing");
 };
 
-// 12. Strategic Optimization: ROI Planner Handler
+// 12. Strategic Optimization: ROI Investment Planner Handler
 window.handleROIPlanner = function (listingId, title) {
-    if (!window.authManager) return;
+    console.log(`[Listings] ROI Planner triggered for: ${title} (${listingId})`);
+    if (!window.authManager) {
+        console.warn("[Listings] AuthManager not found!");
+        return;
+    }
 
     window.authManager.requireAuth(() => {
         alert(`Initializing AI Investment Planner for "${title}"... (ROI Data Incoming)`);
+        console.log("[Listings] Opening chat for ROI Planner...");
         if (window.openModal) window.openModal('chat-modal');
 
         const roiMsg = `Analyze the ROI for property ID "${listingId}". Project 5-year appreciation and rental yield.`;

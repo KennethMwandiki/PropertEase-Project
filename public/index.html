@@ -1254,27 +1254,28 @@
                         In</button><button id="signup-tab" class="auth-tab" data-form="signup-form">Sign Up</button>
                 </div>
                 <!-- Sign In Form -->
-                    <form id="signin-form" class="modal-form">
-                        <h2 class="modal-title">Welcome Back</h2><input id="signin-email" type="email"
-                            placeholder="Email Address" required><input id="signin-password" type="password"
-                            placeholder="Password" required><button type="submit"
-                            class="btn btn-primary btn-full-width">Sign In</button>
-                        <p class="form-switcher">Don't have an account? <a href="#" id="switch-to-signup">Sign Up</a>
-                        </p>
-                    </form>
-                    <!-- Sign Up Form -->
-                        <form id="signup-form" class="modal-form hidden">
-                            <h2 class="modal-title">Create Your Account</h2>
-                            <div id="signup-name-error" class="error-message"></div><input id="signup-name" type="text"
-                                placeholder="Full Name" required>
-                            <div id="signup-email-error" class="error-message"></div><input id="signup-email"
-                                type="email" placeholder="Email Address" required>
-                            <div id="signup-password-error" class="error-message"></div><input id="signup-password"
-                                type="password" placeholder="Password" required><button type="submit"
-                                class="btn btn-primary btn-full-width">Create Account</button>
-                            <p class="form-switcher">Already have an account? <a href="#" id="switch-to-signin">Sign
-                                    In</a></p>
-                        </form>
+                <form id="signin-form" class="modal-form">
+                    <h2 class="modal-title">Welcome Back</h2><input id="signin-email" type="email"
+                        placeholder="Email Address" required><input id="signin-password" type="password"
+                        placeholder="Password" required><button type="submit"
+                        class="btn btn-primary btn-full-width">Sign In</button>
+                    <p class="form-switcher">Don't have an account? <a href="javascript:void(0)" id="switch-to-signup"
+                            onclick="switchToSignup()">Sign Up</a>
+                    </p>
+                </form>
+                <!-- Sign Up Form -->
+                <form id="signup-form" class="modal-form hidden">
+                    <h2 class="modal-title">Create Your Account</h2>
+                    <div id="signup-name-error" class="error-message"></div><input id="signup-name" type="text"
+                        placeholder="Full Name" required>
+                    <div id="signup-email-error" class="error-message"></div><input id="signup-email" type="email"
+                        placeholder="Email Address" required>
+                    <div id="signup-password-error" class="error-message"></div><input id="signup-password"
+                        type="password" placeholder="Password" required><button type="submit"
+                        class="btn btn-primary btn-full-width">Create Account</button>
+                    <p class="form-switcher">Already have an account? <a href="javascript:void(0)" id="switch-to-signin"
+                            onclick="switchToSignin()">Sign In</a></p>
+                </form>
             </div>
         </div>
         <!-- INFLUENCER ONBOARDING HUB -->
